@@ -9,10 +9,38 @@
 
     <body>
 
-    <!--Add a nav bar here -->
-
-    <!-- Add reviews as cards -->
-
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <ul class="nav navbar-nav navbar-right">
+                <li class="nav-item">
+                <a class="nav-link" href="./">< Back</a>
+                </li>
+            </ul>
+        </nav>
+    
+        <div class="container-fluid">
+            <h2>This is {{dealer.full_name}}' reviews:</h2>
+            <div class="container">
+                <div class="card-columns">
+                    {% for review in reviews %}
+                    <div class="col-auto mb-3">
+                        <div class="card">
+                            {% if review.sentiment == "positive" %}
+                            <i class="bi bi-emoji-heart-eyes-fill"></i>
+                            {% elif review.sentiment == "negative" %}
+                            <i class="bi bi-emoji-frown-fill"></i>
+                            {% else %}
+                            <i class="bi bi-emoji-neutral-fill"></i>
+                            {% endif %}
+                            <div class="card-body bg-light">
+                            <p class="card-text">{{review.review}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    
     </body>
 
 </html>
