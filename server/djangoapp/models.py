@@ -2,8 +2,34 @@ from django.db import models
 from django.utils.timezone import now
 
 
+class CarMake(models.Model):
+    name = models.CharField(null=False, max_length=200, default='')
+    description = models.CharField(max_length=300)
+
+    def __str__(self):
+        return "Name: " + self.name
+
+class CarModel(models.Model):
+    SEDAN = 'Sedan'
+    SUV = 'SUV'
+    WAGON = 'Wagon'
+
+    CAR_TYPES = [
+        (SEDAN, 'Sedan'),
+        (SUV, 'SUV'),
+        (WAGON, 'Wagon')
+    ]
+
+    id = models.IntegerField(default=1,primary_key=True)
+    name = models.CharField(null=False, max_length=100, default='My Car')
+    type = models.CharField(null=False,choices=CAR_TYPES, max_length=15, default=SEDAN)
+    car_make = models.ForeignKey(CarMake, on_delete=models.CASCADE)
+    year = models.DateField(default=now)
+
+    def __str__(self):
+        return "Name: " + self.name + " (" + str(self.year) + ")" 
+
 class CarDealer:
-    
     def __init__(self, address, city, full_name, id, lat, long, short_name, st, zip):
         # Dealer address
         self.address = address

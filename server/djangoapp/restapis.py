@@ -44,16 +44,11 @@ def post_request(url, payload, **kwargs):
 
 def get_dealers_from_cf(url, **kwargs):
     results = []
-    # Call get_request with a URL parameter
+
     json_result = get_request(url)
-    if json_result and "rows" in json_result.keys():
-        # Get the row list in JSON as dealers
-        dealers = json_result["rows"]
-        # For each dealer object
-        for dealer in dealers:
-            # Get its content in `doc` object
+    if json_result:
+        for dealer in json_result:
             dealer_doc = dealer["doc"]
-            # Create a CarDealer object with values in `doc` object
             dealer_obj = CarDealer(address=dealer_doc["address"], city=dealer_doc["city"], full_name=dealer_doc["full_name"],
                                    id=dealer_doc["id"], lat=dealer_doc["lat"], long=dealer_doc["long"],
                                    short_name=dealer_doc["short_name"],
@@ -66,7 +61,9 @@ def get_dealers_from_cf(url, **kwargs):
 # Create a get_dealer_reviews_from_cf method to get reviews by dealer id from a cloud function
 def get_dealer_by_id_from_cf(url, id):
     dealer = None
+    print(url)
     json_result = get_request(url, id=id)
+    print(json_result)
     if json_result:
         result = json_result[0]
         dealer = CarDealer(address=result["address"], city=result["city"],id=result["id"], lat=result["lat"], long=result["long"], full_name=result["full_name"],short_name=result["short_name"], st=result["st"], zip=result["zip"])
@@ -93,7 +90,8 @@ def get_dealer_reviews_from_cf(url, **kwargs):
                                    car_make=dealer_review["car_make"],
                                    car_model=dealer_review["car_model"],
                                    car_year=dealer_review["car_year"],
-                                   sentiment="")
+                                   sentiment="",
+                                   id=dealer_review["id"])
     
             review_obj.sentiment = analyze_review_sentiments(review_obj.review)
 
@@ -112,8 +110,8 @@ def analyze_review_sentiments(text):
 
     text = text+"abra cad abra"
     response = nlu.analyze( text=text,features=Features(sentiment=SentimentOptions(targets=[text]))).get_result()
-
-    return json.dumps(response, indent=2)['sentiment']['document']['label']
+    print(response)
+    return response['sentiment']['document']['label']
 
 
 
