@@ -74,7 +74,7 @@ def registration_request(request):
 def get_dealerships(request):
     if request.method == "GET":
         context = {}
-        url = "https://b1f76e64-470e-4fa9-92ce-22c7f524bbc4-bluemix.cloudantnosqldb.appdomain.cloud/dealership/get-dealership"
+        url = "https://eu-de.functions.appdomain.cloud/api/v1/web/b4a057ae-2bee-49a0-9555-b83a0d28c325/dealership-package/get-dealership"
         dealerships = get_dealers_from_cf(url)
         context["dealership_list"] = dealerships
         return render(request, 'djangoapp/index.html', context)
@@ -84,11 +84,11 @@ def get_dealer_details(request, id):
     if request.method == "GET":
         context = {}
         
-        url = "https://b1f76e64-470e-4fa9-92ce-22c7f524bbc4-bluemix.cloudantnosqldb.appdomain.cloud/dealership/get-dealership"
+        url = "https://eu-de.functions.appdomain.cloud/api/v1/web/b4a057ae-2bee-49a0-9555-b83a0d28c325/dealership-package/get-dealership"
         dealer = get_dealer_by_id_from_cf(url, id=id)
         context["dealer"] = dealer
         
-        url = "https://b1f76e64-470e-4fa9-92ce-22c7f524bbc4-bluemix.cloudantnosqldb.appdomain.cloud/dealership/get-review"
+        url = "https://eu-de.functions.appdomain.cloud/api/v1/web/b4a057ae-2bee-49a0-9555-b83a0d28c325/dealership-package/get-review"
         reviews = get_dealer_reviews_from_cf(url, id=id)
         context["reviews"] = reviews
         
@@ -99,7 +99,7 @@ def add_review(request, id):
     
     if request.method == 'GET':
         context = {}
-        url = "https://b1f76e64-470e-4fa9-92ce-22c7f524bbc4-bluemix.cloudantnosqldb.appdomain.cloud/dealership/get-dealership"
+        url = "https://eu-de.functions.appdomain.cloud/api/v1/web/b4a057ae-2bee-49a0-9555-b83a0d28c325/dealership-package/get-dealership"
         dealer = get_dealer_by_id_from_cf(url, id=id)
         context["dealer"] = dealer
         # Get cars for the dealer
@@ -118,7 +118,6 @@ def add_review(request, id):
             payload["time"] = datetime.utcnow().isoformat()
             payload["name"] = username
             payload["dealership"] = id
-            payload["id"] = id
             payload["review"] = request.POST["content"]
             payload["purchase"] = False
             if "purchasecheck" in request.POST:
@@ -131,7 +130,7 @@ def add_review(request, id):
 
             new_payload = {}
             new_payload["review"] = payload
-            url = "https://b1f76e64-470e-4fa9-92ce-22c7f524bbc4-bluemix.cloudantnosqldb.appdomain.cloud/dealership/get-post"    
+            url = "https://eu-de.functions.appdomain.cloud/api/v1/web/b4a057ae-2bee-49a0-9555-b83a0d28c325/dealership-package/post-review"    
             post_request(url, new_payload, id=id)
         return redirect("djangoapp:dealer_details", id=id)
 

@@ -61,11 +61,9 @@ def get_dealers_from_cf(url, **kwargs):
 # Create a get_dealer_reviews_from_cf method to get reviews by dealer id from a cloud function
 def get_dealer_by_id_from_cf(url, id):
     dealer = None
-    print(url)
-    json_result = get_request(url, id=id)
-    print(json_result)
-    if json_result:
-        result = json_result[0]
+    json_result = get_request(url, dealerId=id)
+    if json_result and json_result["docs"] and len(json_result["docs"]) > 0:
+        result = json_result["docs"][0]
         dealer = CarDealer(address=result["address"], city=result["city"],id=result["id"], lat=result["lat"], long=result["long"], full_name=result["full_name"],short_name=result["short_name"], st=result["st"], zip=result["zip"])
     return dealer
 
@@ -75,12 +73,12 @@ def get_dealer_reviews_from_cf(url, **kwargs):
     
     id = kwargs.get("id")
     if id:
-        json_result = get_request(url, id=id)
+        json_result = get_request(url, dealerId=id)
     else:
         json_result = get_request(url)
     
     if json_result:
-        reviews = json_result["data"]["docs"]
+        reviews = json_result["docs"]
         for dealer_review in reviews:
             review_obj = DealerReview(dealership=dealer_review["dealership"],
                                    name=dealer_review["name"],
@@ -110,7 +108,6 @@ def analyze_review_sentiments(text):
 
     text = text+"abra cad abra"
     response = nlu.analyze( text=text,features=Features(sentiment=SentimentOptions(targets=[text]))).get_result()
-    print(response)
     return response['sentiment']['document']['label']
 
 
